@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { game } from '$lib/stores/game';
+  import { game } from '$lib/stores/game.svelte';
 
   let number = $state(0);
 

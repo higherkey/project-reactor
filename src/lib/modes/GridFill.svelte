@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { game } from '$lib/stores/game';
+  import { game } from '$lib/stores/game.svelte';
 
   let filled = $state(0);
   let timeout: number;

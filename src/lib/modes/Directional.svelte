@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { game } from '$lib/stores/game';
+  import { game } from '$lib/stores/game.svelte';
 
   const directions = [
     { name: 'LEFT', rotation: 180 },

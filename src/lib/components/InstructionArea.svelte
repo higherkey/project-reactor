@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { game } from '$lib/stores/game';
+  import { game } from '$lib/stores/game.svelte';
   import ColorMatch from '$lib/modes/ColorMatch.svelte';
   import QuickMath from '$lib/modes/QuickMath.svelte';
   import OddOneOut from '$lib/modes/OddOneOut.svelte';

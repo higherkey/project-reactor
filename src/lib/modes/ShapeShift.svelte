@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { game } from '$lib/stores/game';
+  import { game } from '$lib/stores/game.svelte';
 
   let sides = $state(3);
   let targetSides = $state(4);

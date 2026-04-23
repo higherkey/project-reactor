@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { game } from '$lib/stores/game';
+  import { game } from '$lib/stores/game.svelte';
 
   let radius = $state(20);
   let maxRadius = 130; // Slightly less than half of 280px container
