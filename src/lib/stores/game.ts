@@ -16,8 +16,8 @@ class GameEngine {
   winner = $state<number | null>(null);
   isValid = $state(false); // New: global validation state for current instruction
 
-  addPoint(playerIndex: number) {
-    if (this.gameState !== 'active') return;
+  addPoint(playerIndex: number): boolean {
+    if (this.gameState !== 'active') return false;
     
     if (this.isValid) {
       this.scores[playerIndex]++;
@@ -27,8 +27,10 @@ class GameEngine {
       } else {
         this.gameState = 'roundOver';
       }
+      return true;
     } else {
       this.penalize(playerIndex);
+      return false;
     }
   }
 

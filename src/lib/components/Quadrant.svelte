@@ -14,10 +14,9 @@
   function handleTap(e: PointerEvent) {
     if (isLocked || game.gameState !== 'active') return;
 
-    const before = game.scores[index];
-    game.addPoint(index);
+    const success = game.addPoint(index);
     
-    if (game.scores[index] < before) {
+    if (!success) {
       triggerLockout();
     }
   }
@@ -34,6 +33,8 @@
   class="quadrant glass neon-border-{color} {isLocked ? 'locked' : ''}"
   style="transform: rotate({rotation}deg);"
   onpointerdown={handleTap}
+  role="button"
+  tabindex="0"
 >
   <div class="score neon-text-{color}">{game.scores[index]}</div>
   <div class="player-label">P{index + 1}</div>
