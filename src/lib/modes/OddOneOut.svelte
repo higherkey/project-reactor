@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { game } from '$lib/stores/game.svelte';
 
-  const icons = ['▲', '■', '●', '◆', '★', '✖'];
+  const icons = ['▲', '■', '●', '◆', '★', '✖', '✚', '⬢'];
   let grid = $state<string[]>([]);
   
   function generate() {
@@ -12,15 +12,15 @@
         otherIcon = icons[Math.floor(Math.random() * icons.length)];
     }
 
-    const isActuallyCorrect = Math.random() > 0.5;
-    grid = Array(9).fill(baseIcon);
+    const hasOddOne = Math.random() > 0.4; // 60% chance of odd one
+    grid = Array(12).fill(baseIcon);
     
-    if (isActuallyCorrect) {
-        const oddIdx = Math.floor(Math.random() * 9);
+    if (hasOddOne) {
+        const oddIdx = Math.floor(Math.random() * 12);
         grid[oddIdx] = otherIcon;
     }
     
-    game.isValid = isActuallyCorrect;
+    game.isValid = hasOddOne;
   }
 
   onMount(() => {
@@ -37,14 +37,19 @@
 <style>
   .odd-one-out {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    padding: 10px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
   }
 
   .icon {
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: var(--neon-pink);
-    text-shadow: 0 0 5px rgba(255, 0, 122, 0.4);
+    text-shadow: 0 0 10px rgba(255, 0, 122, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>

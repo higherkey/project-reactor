@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { game } from '$lib/stores/game.svelte';
 
   let dots = $state<Array<{x: number, y: number}>>([]);
   let showDots = $state(true);
   let count = $state(0);
+  let timeout: any;
 
   function generate() {
     count = Math.floor(Math.random() * 8) + 2; // 2 to 9
@@ -15,13 +16,17 @@
     
     game.isValid = count % 2 === 0;
     
-    setTimeout(() => {
+    timeout = setTimeout(() => {
       showDots = false;
     }, 600);
   }
 
   onMount(() => {
     generate();
+  });
+
+  onDestroy(() => {
+    clearTimeout(timeout);
   });
 </script>
 

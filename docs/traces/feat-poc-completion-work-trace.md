@@ -1,44 +1,43 @@
-# Work Trace: feat-poc-completion-work-trace
+# Work Trace: feat/poc-completion
 
-## 1. Planned Work
+## 1) Planned Work
+- **TODO List**:
+  - [ ] Set `penaltyEnabled` default to `false`.
+  - [ ] Implement `localStorage` persistence for settings in `game.svelte.ts`.
+  - [ ] Categorize game modes (Logic, Speed, Knowledge, Visual) in `SettingsOverlay.svelte`.
+  - [ ] Add "All/None" category toggles in settings.
+  - [ ] Map Easy/Medium/Hard mode lists to difficulty presets.
+  - [ ] Add "Skip Round" and "End Game" buttons with confirmation in `InstructionArea.svelte`.
+  - [ ] Perform a full review of all 15 game modes for clarity and performance.
+  - [ ] Fix/Improve `OddOneOut.svelte` (symbol mismatch logic).
+- **File List**:
+  - `src/lib/stores/game.svelte.ts`: Settings defaults, persistence, skip/end methods.
+  - `src/lib/components/SettingsOverlay.svelte`: Categorized mode selection, category toggles.
+  - `src/lib/components/InstructionArea.svelte`: Skip/End UI, confirmation logic.
+  - `src/lib/modes/*.svelte`: Logic and UI review for all modes.
+- **Rationale**:
+  - `game.svelte.ts`: Centralizing persistence ensures a consistent experience across sessions.
+  - `SettingsOverlay.svelte`: Categorization improves discoverability as the mode list grows.
+  - `InstructionArea.svelte`: Essential game management controls for better UX.
+  - Game Mode Review: Ensuring cognitive challenges are intuitive and bug-free for PWA deployment.
 
-### TODO List
-- [x] Initialize Git and Branch
-- [x] Create `PROJECT.md` with architecture and roadmap
-- [x] Synthesize Roadmap from `.docx` specifications
-- [x] Resolve 500 Error on local host access
-- [x] Implement Batch 1 Modes (5 modes)
-- [x] Implement Batch 2 Modes (Final 7 POC modes):
-    - [x] Flash Count
-    - [x] Clock Watch
-    - [x] Greater Than
-    - [x] Directional
-    - [x] Flag Finder
-    - [x] Grid Fill
-    - [x] Rhyme Time
-- [x] Implement Penalty/Lockout mechanism refinement (2s lockout on wrong tap)
+## 2) In Progress Work
+- Final verification of game mode logic and persistence.
 
-### File List
-- `PROJECT.md`: (NEW) Project documentation and roadmap.
-- `src/lib/modes/*.svelte`: (NEW) New game mode components.
-- `src/lib/components/InstructionArea.svelte`: (MODIFY) Mode integration.
-
-### Rationale
-Completing the POC requires implementing the top 15 game modes. Batch 1 focuses on the most structurally diverse modes to test the engine's flexibility.
-
-## 2. In Progress Work
-- Debugging 500 error on external host access.
-- Preparing Batch 1 mode implementations.
-
-## 3. Completed Work
-- **Documentation**: Created `PROJECT.md` covering the architecture (Svelte 5, Runes, Pointer Events).
-
-## 4. Issues and Out of Scope
-
-### 4a) Potential Blockers
-- **500 Error on Host Access**: User reported a 500 error when accessing the dev server via `--host`.
-    - **Resolution**: Added `server.allowedHosts: true` to `vite.config.ts`. This bypasses Vite's strict host checking which often triggers a 500/block when accessing via a local IP on mobile devices.
-    - **Status**: [RESOLVED] awaiting user verification.
-- **Svelte 5 const tag error**: Vite pre-transform error due to `{@const}` not being an immediate child of a block.
-    - **Resolution**: Moved the `{@const}` declaration above the `<div>` element in `InstructionArea.svelte` to satisfy the Svelte 5 compiler rules.
-    - **Status**: [RESOLVED].
+## 3) Completed Work
+- **Summary**:
+  - `game.svelte.ts`: Implemented `localStorage` persistence, difficulty-scaled timers (Easy: 7s, Medium: 5s, Hard: 3s), and improved winner evaluation for draws.
+  - `SettingsOverlay.svelte`: Added global "ALL/NONE" toggles for all game modes, removed infinite timer support, and added 's' unit display.
+  - `InstructionArea.svelte`: Added auto-start logic (3s countdown) for rounds, draw state handling, and lifecycle cleanup (`onDestroy`).
+  - `Quadrant.svelte`: Added visual "TEAM A/B" indicators and persisted player key remapping.
+  - `ClockWatch.svelte`, `GreaterThan.svelte`: Fixed critical logic bugs (infinite loop risk and hardcoded comparison symbols) found during peer review.
+  - `GridFill.svelte`: Added auto-end logic when the grid is full.
+- **Revised Rationale**:
+  - Stability: Auto-start and auto-end logic ensure the game flow never stalls.
+  - Clarity: Team indicators and draw handling provide essential feedback for competitive play.
+  - Type Safety: Fixed TypeScript interface mismatches to ensure robust build verification.
+  - UX: Clamped timer limits (1-10s) to keep the pace intense and prevent "false" infinite rounds.
+- **4a) Potential Blockers**: (None identified)
+- **4b) Opportunities**:
+  - PWA: Finalize manifest and service worker for offline play.
+  - Testing: Implement Vitest for core engine logic.

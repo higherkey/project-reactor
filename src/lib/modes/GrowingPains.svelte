@@ -3,7 +3,7 @@
   import { game } from '$lib/stores/game.svelte';
 
   let radius = $state(20);
-  let maxRadius = 130; // Slightly less than half of 280px container
+  let maxRadius = 130; 
   let growthRate = 0.5;
   let animationFrame: number;
 
@@ -11,9 +11,9 @@
     radius += growthRate;
     
     // game.isValid is true when circle is "large enough" to be touching the edge
-    game.isValid = radius >= maxRadius - 10;
+    game.isValid = radius >= maxRadius - 5;
 
-    if (radius > maxRadius + 20) {
+    if (radius > maxRadius + 15) {
         // Reset if it grows too far without being tapped
         radius = 20;
     }
@@ -34,10 +34,9 @@
   <div 
     class="circle" 
     style="width: {radius * 2}px; height: {radius * 2}px;"
+    class:valid={game.isValid}
   ></div>
-  <div class="label" class:valid={game.isValid}>
-    {game.isValid ? 'TAP NOW!' : 'WAIT...'}
-  </div>
+  <div class="boundary"></div>
 </div>
 
 <style>
@@ -55,21 +54,19 @@
     border: 4px solid var(--neon-blue);
     border-radius: 50%;
     box-shadow: 0 0 20px var(--neon-blue);
-    transition: border-color 0.1s;
+    transition: border-color 0.1s, box-shadow 0.1s;
   }
 
-  .label {
-    position: relative;
-    z-index: 10;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--text-dim);
-    transition: all 0.2s;
+  .circle.valid {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 30px var(--neon-green);
   }
 
-  .label.valid {
-    color: var(--neon-green);
-    transform: scale(1.2);
-    text-shadow: 0 0 10px var(--neon-green);
+  .boundary {
+    position: absolute;
+    width: 260px; /* maxRadius * 2 */
+    height: 260px;
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
   }
 </style>

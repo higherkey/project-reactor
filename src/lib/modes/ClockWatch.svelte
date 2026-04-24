@@ -15,11 +15,11 @@
     if (isCorrect) {
       digitalTime = `${hour === 0 ? 12 : hour}:${minute.toString().padStart(2, '0')}`;
     } else {
-      let h2 = Math.floor(Math.random() * 12);
-      let m2 = Math.floor(Math.random() * 12) * 5;
-      while (h2 === hour && m2 === minute) {
-         h2 = Math.floor(Math.random() * 12);
-      }
+      let h2: number, m2: number;
+      do {
+        h2 = Math.floor(Math.random() * 12);
+        m2 = Math.floor(Math.random() * 12) * 5;
+      } while (h2 === hour && m2 === minute);
       digitalTime = `${h2 === 0 ? 12 : h2}:${m2.toString().padStart(2, '0')}`;
     }
     
