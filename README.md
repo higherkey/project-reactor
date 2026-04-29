@@ -32,7 +32,7 @@ Players occupy quadrants of the screen. A central instruction area displays a ch
 
 ### Installation
 ```bash
-git clone https://github.com/your-username/project-reactor.git
+git clone https://github.com/[your-username]/project-reactor.git
 cd project-reactor
 npm install
 ```
