@@ -20,20 +20,20 @@
   import type { GameMode } from '$lib/stores/game.svelte';
 
   const modes: GameMode[] = [
-    { id: 'color-match', name: 'Color Match', component: ColorMatch, description: 'Tap if color name matches text color!', category: 'speed' },
+    { id: 'color-match', name: 'Color Match', component: ColorMatch, description: 'Tap if word matches its color!', category: 'speed' },
     { id: 'quick-math', name: 'Quick Math', component: QuickMath, description: 'Tap if the equation is correct!', category: 'logic' },
     { id: 'odd-one-out', name: 'Odd One Out', component: OddOneOut, description: 'Tap if one symbol is different!', category: 'visual' },
-    { id: 'growing-pains', name: 'Growing Pains', component: GrowingPains, description: 'Tap when the circle touches the edge!', category: 'speed' },
-    { id: 'opposite-day', name: 'Opposite Day', component: OppositeDay, description: 'Tap if the words are antonyms!', category: 'knowledge' },
-    { id: 'symmetry-check', name: 'Symmetry Check', component: SymmetryCheck, description: 'Tap if the grids are symmetrical!', category: 'logic' },
+    { id: 'growing-pains', name: 'Growing Pains', component: GrowingPains, description: 'Tap when the circle hits the edge!', category: 'speed' },
+    { id: 'opposite-day', name: 'Opposite Day', component: OppositeDay, description: 'Tap if the words are opposites!', category: 'knowledge' },
+    { id: 'symmetry-check', name: 'Symmetry Check', component: SymmetryCheck, description: 'Tap if the patterns mirror!', category: 'logic' },
     { id: 'prime-pursuit', name: 'Prime Pursuit', component: PrimePursuit, description: 'Tap if the number is prime!', category: 'knowledge' },
-    { id: 'shape-shift', name: 'Shape Shift', component: ShapeShift, description: 'Tap if sides match the target!', category: 'visual' },
-    { id: 'flash-count', name: 'Flash Count', component: FlashCount, description: 'Tap if the number of dots was EVEN!', category: 'speed' },
-    { id: 'clock-watch', name: 'Clock Watch', component: ClockWatch, description: 'Tap if digital matches analog!', category: 'knowledge' },
-    { id: 'greater-than', name: 'Greater Than', component: GreaterThan, description: 'Tap if the left side is GREATER!', category: 'logic' },
-    { id: 'directional', name: 'Directional', component: Directional, description: 'Tap if arrow points in text direction!', category: 'speed' },
-    { id: 'flag-finder', name: 'Flag Finder', component: FlagFinder, description: 'Tap if name matches the flag!', category: 'knowledge' },
-    { id: 'grid-fill', name: 'Grid Fill', component: GridFill, description: 'Tap when the grid is FULL!', category: 'logic' },
+    { id: 'shape-shift', name: 'Shape Shift', component: ShapeShift, description: 'Tap when the shape matches!', category: 'visual' },
+    { id: 'flash-count', name: 'Flash Count', component: FlashCount, description: 'Tap if the dot count was even!', category: 'speed' },
+    { id: 'clock-watch', name: 'Clock Watch', component: ClockWatch, description: 'Tap if the times match!', category: 'knowledge' },
+    { id: 'greater-than', name: 'Greater Than', component: GreaterThan, description: 'Tap if the comparison is true!', category: 'logic' },
+    { id: 'directional', name: 'Directional', component: Directional, description: 'Tap if arrow matches the word!', category: 'speed' },
+    { id: 'flag-finder', name: 'Flag Finder', component: FlagFinder, description: 'Tap if flag matches the name!', category: 'knowledge' },
+    { id: 'grid-fill', name: 'Grid Fill', component: GridFill, description: 'Tap when the grid is full!', category: 'logic' },
     { id: 'rhyme-time', name: 'Rhyme Time', component: RhymeTime, description: 'Tap if the words rhyme!', category: 'knowledge' }
   ];
 
@@ -115,12 +115,13 @@
   {/if}
 
   {#if game.gameState === 'waiting'}
-    <div class="message neon-text-blue">PROJECT REACTOR</div>
+    <div class="message neon-text-blue mirror">PROJECT REACTOR</div>
     <button class="start-btn glass neon-border-green" onpointerdown={nextRound}>START GAME</button>
+    <div class="message neon-text-blue">PROJECT REACTOR</div>
   {:else if game.gameState === 'active' && game.currentMode}
     {@const ModeComp = game.currentMode.component}
     <div class="mode-display">
-      <div class="mode-info">
+      <div class="mode-info mirror">
         <span class="mode-name">{game.currentMode.name}</span>
         <p class="mode-description">{(game.currentMode as any).description}</p>
         {#if game.roundTimeLimit > 0}
@@ -128,6 +129,13 @@
         {/if}
       </div>
       <ModeComp />
+      <div class="mode-info">
+        <span class="mode-name">{game.currentMode.name}</span>
+        <p class="mode-description">{(game.currentMode as any).description}</p>
+        {#if game.roundTimeLimit > 0}
+          <div class="timer {timeLeft <= 3 ? 'danger' : ''}">{timeLeft}s</div>
+        {/if}
+      </div>
       
       <div class="game-controls">
         <button class="control-btn skip" onpointerdown={() => confirmAction = 'skip'}>SKIP</button>
@@ -135,18 +143,24 @@
       </div>
     </div>
   {:else if game.gameState === 'roundOver'}
-    <div class="message neon-text-green">BINGO!</div>
+    <div class="message neon-text-green mirror">ROUND OVER</div>
     <div class="auto-start">Next round in {autoStartLeft}s...</div>
     <button class="start-btn glass neon-border-blue" onpointerdown={nextRound}>START NOW</button>
+    <div class="message neon-text-green">ROUND OVER</div>
   {:else if game.gameState === 'gameOver'}
     {#if game.winner !== null}
+      <div class="message neon-text-yellow mirror">
+        {game.teamMode !== 'ffa' ? 'TEAM' : 'PLAYER'} {game.winner + 1} WINS!
+      </div>
+      <button class="start-btn glass neon-border-blue" onpointerdown={() => game.reset()}>RESET</button>
       <div class="message neon-text-yellow">
         {game.teamMode !== 'ffa' ? 'TEAM' : 'PLAYER'} {game.winner + 1} WINS!
       </div>
     {:else}
+      <div class="message neon-text-yellow mirror">IT'S A DRAW!</div>
+      <button class="start-btn glass neon-border-blue" onpointerdown={() => game.reset()}>RESET</button>
       <div class="message neon-text-yellow">IT'S A DRAW!</div>
     {/if}
-    <button class="start-btn glass neon-border-blue" onpointerdown={() => game.reset()}>RESET</button>
   {/if}
 </div>
 
@@ -224,7 +238,12 @@
   }
 
   .mode-info {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+  }
+
+  .mode-info.mirror {
+    margin-bottom: 12px;
+    margin-top: 0;
   }
 
   .mode-name {
@@ -259,12 +278,21 @@
     to { opacity: 1; }
   }
 
+  .mirror {
+    transform: rotate(180deg);
+  }
+
   .message {
     font-size: 2.2rem;
     font-weight: 900;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     letter-spacing: -1px;
     line-height: 1.1;
+  }
+
+  .message.mirror {
+    margin-bottom: 0;
+    margin-top: 0;
   }
 
   .auto-start {
