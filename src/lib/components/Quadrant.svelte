@@ -5,10 +5,9 @@
   interface Props {
     index: number;
     color: 'blue' | 'pink' | 'green' | 'yellow';
-    rotation: number;
   }
 
-  let { index, color, rotation }: Props = $props();
+  let { index, color }: Props = $props();
   let isLocked = $state(false);
   let isEditingKey = $state(false);
 
@@ -75,7 +74,7 @@
     </div>
   {/if}
 
-  <div class="content" style="transform: rotate({rotation}deg);">
+  <div class="content">
     <div class="score neon-text-{color}">{game.scores[index]}</div>
     <div class="player-label">P{index + 1}</div>
 

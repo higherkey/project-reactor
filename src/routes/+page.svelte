@@ -26,16 +26,16 @@
 
 <main class="game-container">
   <div class="corner top-left">
-    <Quadrant index={0} color="blue" rotation={90} />
+    <Quadrant index={0} color="blue" />
   </div>
   <div class="corner top-right">
-    <Quadrant index={1} color="pink" rotation={180} />
+    <Quadrant index={1} color="pink" />
   </div>
   <div class="corner bottom-left">
-    <Quadrant index={2} color="green" rotation={0} />
+    <Quadrant index={2} color="green" />
   </div>
   <div class="corner bottom-right">
-    <Quadrant index={3} color="yellow" rotation={270} />
+    <Quadrant index={3} color="yellow" />
   </div>
 
   <!-- Permanent settings gear — always visible in center -->
@@ -55,20 +55,18 @@
 
 <style>
   /*
-   * The key insight for responsive layout:
-   * Portrait: short axis = width  → square = 50vw × 50vw, gap is vertical
-   * Landscape: short axis = height → square = 50vh × 50vh, gap is horizontal
-   * min(50vw, 50vh) covers both without overflow.
+   * Layout approach:
+   * - Use CSS Grid for the 2x2 quadrant layout (fills the whole viewport)
+   * - Center area overlays the grid
    */
-  :global(:root) {
-    --q-size: min(50vw, 50vh);
-  }
-
   .game-container {
     position: fixed;
     inset: 0;
     background: var(--bg-dark);
     overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
   }
 
   /* Subtle animated background glow — doesn't scale any UI elements */
@@ -87,20 +85,21 @@
     100% { opacity: 0.8;   transform: scale(1.3) rotate(5deg); }
   }
 
-  /* Corners: always square, always fit the short edge */
+  /* Corners: fill their grid cell */
   .corner {
-    position: absolute;
-    width: var(--q-size);
-    height: var(--q-size);
+    position: relative;
+    width: 100%;
+    height: 100%;
     z-index: 2;
   }
 
-  .top-left     { top: 0;    left: 0;  }
-  .top-right    { top: 0;    right: 0; }
-  .bottom-left  { bottom: 0; left: 0;  }
-  .bottom-right { bottom: 0; right: 0; }
+  /* Grid placement */
+  .top-left     { grid-column: 1; grid-row: 1; }
+  .top-right    { grid-column: 2; grid-row: 1; }
+  .bottom-left  { grid-column: 1; grid-row: 2; }
+  .bottom-right { grid-column: 2; grid-row: 2; }
 
-  /* Center display area — positioned between the corner squares */
+  /* Center display area — overlays the grid */
   .center-layer {
     position: absolute;
     inset: 0;
@@ -111,15 +110,14 @@
     gap: 20px;
     z-index: 10;
     pointer-events: none;
-    /* Inset by the quadrant size so content can't overlap corners */
-    padding: var(--q-size);
+    padding: 20px;
   }
 
-  /* Settings gear — moved to the side, no background */
+  /* Settings gear — positioned at top-left of center area */
   .settings-gear {
     position: absolute;
     z-index: 20;
-    font-size: 2.2rem;
+    font-size: 2rem;
     width: 44px;
     height: 44px;
     background: none;
@@ -131,39 +129,28 @@
     align-items: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: auto;
-    /* Default: top-right of center area */
-    top: calc(50% - 110px);
-    right: calc(50% - 280px);
+    /* Position near center but out of the way */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateY(-100px);
   }
 
   .settings-gear:hover {
     color: var(--neon-blue);
     filter: drop-shadow(0 0 8px var(--neon-blue));
-    transform: rotate(90deg) scale(1.1);
   }
 
-  /* On landscape, keep it next to the instruction box */
+  /* On landscape, move gear to the side */
   @media (orientation: landscape) {
     .settings-gear {
-      top: 50%;
-      right: calc(50% - 320px);
-      transform: translateY(-50%);
-    }
-    .settings-gear:hover {
-      transform: translateY(-50%) rotate(90deg) scale(1.1);
+      transform: translate(-50%, -50%) translateX(-200px);
     }
   }
 
-  /* Mobile/Portrait adjustment: put it below the box if horizontal space is tight */
+  /* Mobile/Portrait: position gear above the instruction box */
   @media (max-width: 600px) {
     .settings-gear {
-      top: auto;
-      bottom: calc(50% - 140px);
-      right: 50%;
-      transform: translateX(50%);
-    }
-    .settings-gear:hover {
-      transform: translateX(50%) rotate(90deg) scale(1.1);
+      transform: translate(-50%, -50%) translateY(-120px);
     }
   }
 </style>
