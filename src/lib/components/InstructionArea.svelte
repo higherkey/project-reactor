@@ -103,9 +103,9 @@
   });
 </script>
 
-<div class="instruction-container glass">
+<div class="instruction-container">
   {#if confirmAction}
-    <div class="confirmation-overlay glass">
+    <div class="confirmation-overlay">
       <p>Are you sure you want to {confirmAction}?</p>
       <div class="confirm-btns">
         <button class="confirm-btn yes" onpointerdown={handleConfirm}>YES</button>
@@ -115,11 +115,29 @@
   {/if}
 
   {#if game.gameState === 'waiting'}
+    <!-- Mirrored title for top players -->
+    <div class="message neon-text-blue mirrored">PROJECT REACTOR</div>
+    <button class="start-btn neon-border-green" onpointerdown={nextRound}>START GAME</button>
+    <!-- Normal title for bottom players -->
     <div class="message neon-text-blue">PROJECT REACTOR</div>
-    <button class="start-btn glass neon-border-green" onpointerdown={nextRound}>START GAME</button>
   {:else if game.gameState === 'active' && game.currentMode}
     {@const ModeComp = game.currentMode.component}
     <div class="mode-display">
+      <!-- Top instruction panel (rotated 180 for top players) -->
+      <div class="mode-info mirrored">
+        <span class="mode-name">{game.currentMode.name}</span>
+        <p class="mode-description">{(game.currentMode as any).description}</p>
+        {#if game.roundTimeLimit > 0}
+          <div class="timer {timeLeft <= 3 ? 'danger' : ''}">{timeLeft}s</div>
+        {/if}
+      </div>
+
+      <!-- Center game content -->
+      <div class="mode-content">
+        <ModeComp />
+      </div>
+      
+      <!-- Bottom instruction panel (normal orientation for bottom players) -->
       <div class="mode-info">
         <span class="mode-name">{game.currentMode.name}</span>
         <p class="mode-description">{(game.currentMode as any).description}</p>
@@ -127,7 +145,6 @@
           <div class="timer {timeLeft <= 3 ? 'danger' : ''}">{timeLeft}s</div>
         {/if}
       </div>
-      <ModeComp />
       
       <div class="game-controls">
         <button class="control-btn skip" onpointerdown={() => confirmAction = 'skip'}>SKIP</button>
@@ -135,18 +152,24 @@
       </div>
     </div>
   {:else if game.gameState === 'roundOver'}
-    <div class="message neon-text-green">BINGO!</div>
+    <div class="message neon-text-green mirrored">BINGO!</div>
     <div class="auto-start">Next round in {autoStartLeft}s...</div>
-    <button class="start-btn glass neon-border-blue" onpointerdown={nextRound}>START NOW</button>
+    <button class="start-btn neon-border-blue" onpointerdown={nextRound}>START NOW</button>
+    <div class="message neon-text-green">BINGO!</div>
   {:else if game.gameState === 'gameOver'}
     {#if game.winner !== null}
+      <div class="message neon-text-yellow mirrored">
+        {game.teamMode !== 'ffa' ? 'TEAM' : 'PLAYER'} {game.winner + 1} WINS!
+      </div>
+      <button class="start-btn neon-border-blue" onpointerdown={() => game.reset()}>RESET</button>
       <div class="message neon-text-yellow">
         {game.teamMode !== 'ffa' ? 'TEAM' : 'PLAYER'} {game.winner + 1} WINS!
       </div>
     {:else}
-      <div class="message neon-text-yellow">IT'S A DRAW!</div>
+      <div class="message neon-text-yellow mirrored">IT&apos;S A DRAW!</div>
+      <button class="start-btn neon-border-blue" onpointerdown={() => game.reset()}>RESET</button>
+      <div class="message neon-text-yellow">IT&apos;S A DRAW!</div>
     {/if}
-    <button class="start-btn glass neon-border-blue" onpointerdown={() => game.reset()}>RESET</button>
   {/if}
 </div>
 
@@ -154,22 +177,26 @@
   .instruction-container {
     position: relative;
     width: 100%;
-    max-width: 480px;
+    max-width: 600px;
     height: auto;
-    min-height: 180px;
+    min-height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 28px 32px;
+    padding: 24px 40px;
+    gap: 16px;
     pointer-events: auto;
     z-index: 100;
-    border-radius: 24px;
-    background: rgba(10, 10, 12, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 8px 60px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    background: #0a0a0c;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 242, 255, 0.1);
+  }
+
+  .mirrored {
+    transform: rotate(180deg);
   }
 
   .confirmation-overlay {
@@ -180,8 +207,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(10, 10, 12, 0.95);
-    border-radius: 24px;
+    background: rgba(10, 10, 12, 0.98);
+    border-radius: 20px;
     padding: 20px;
   }
 
@@ -221,36 +248,53 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 12px;
   }
 
   .mode-info {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    width: 100%;
+  }
+
+  .mode-content {
+    padding: 12px 0;
   }
 
   .mode-name {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: var(--neon-blue);
-    display: block;
-    margin-bottom: 8px;
+    white-space: nowrap;
   }
 
   .mode-description {
-    font-size: 1rem;
-    color: var(--text-dim);
-    opacity: 0.8;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    opacity: 0.9;
+    margin: 0;
   }
 
   .timer {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 900;
     color: var(--neon-blue);
-    margin-top: 10px;
     font-family: var(--font-mono);
+    padding: 2px 10px;
+    background: rgba(0, 242, 255, 0.1);
+    border-radius: 6px;
   }
 
   .timer.danger {
     color: var(--neon-red);
+    background: rgba(255, 49, 49, 0.15);
     animation: flash 0.5s infinite alternate;
   }
 
@@ -260,9 +304,8 @@
   }
 
   .message {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     font-weight: 900;
-    margin-bottom: 20px;
     letter-spacing: -1px;
     line-height: 1.1;
   }
@@ -270,13 +313,12 @@
   .auto-start {
     font-size: 0.9rem;
     color: var(--text-dim);
-    margin-bottom: 20px;
     font-family: var(--font-mono);
   }
 
   .start-btn {
-    padding: 16px 32px;
-    background: rgba(255, 255, 255, 0.05);
+    padding: 14px 28px;
+    background: rgba(255, 255, 255, 0.08);
     color: white;
     font-size: 1rem;
     font-weight: 900;
@@ -285,13 +327,16 @@
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+  }
+
+  .start-btn:hover {
+    background: rgba(0, 242, 255, 0.15);
   }
 
   .game-controls {
     display: flex;
     gap: 10px;
-    margin-top: 25px;
+    margin-top: 8px;
   }
 
   .control-btn {
